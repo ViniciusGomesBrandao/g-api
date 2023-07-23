@@ -3,6 +3,18 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": true
+  },
+  "projects": {
+    "bigdatacorp": {
+      "type": "library",
+      "root": "libs/bigdatacorp",
+      "entryFile": "index",
+      "sourceRoot": "libs/bigdatacorp/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/bigdatacorp/tsconfig.lib.json"
+      }
+    }
   }
 }
