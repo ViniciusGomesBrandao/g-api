@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as _ from 'lodash';
+import { PrismaService } from 'src/prisma/prisma.service';
+
 interface IOutput {
   success: boolean;
   message: string;
@@ -16,6 +18,10 @@ export class BigdatacorpService {
   private _expiration_minute: number = 1440; //24H
   private _tz: string = 'America/Sao_Paulo';
   private _origin: string = 'bigdatacorp';
+
+  constructor(private prisma: PrismaService) {
+    this._tz = `${process.env.TZ}` ? `${process.env.TZ}` : this._tz;
+  }
 
   async requestApi(_params: any) {
     let output: any;
@@ -1334,7 +1340,7 @@ export interface defaultFilterKeys {
 }
 
 export interface getRegistrationDataParams extends defaultFilterKeys {
-
+  
 }
 
 export interface getDomainsParams extends defaultFilterKeys {

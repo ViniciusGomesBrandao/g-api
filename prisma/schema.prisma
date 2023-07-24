@@ -9,3 +9,62 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+
+model Users {
+  id                    Int                    @id @default(autoincrement())
+  id_user               Int?
+  status                Status                 @default(ACTIVE)
+  email                 String?                @db.VarChar(255)
+  password              String?                @db.VarChar(255)
+  username              String?                @db.VarChar(255) @unique
+  role                  Role                   
+  access_token          String?                
+  seed                  String?
+  integration_token     String?
+  onetime_token         String?
+  two_factor_active     Boolean                @default(false)
+  access_allowed        Boolean                @default(false)
+  
+  created_at            DateTime               @default(now())
+  updated_at            DateTime               @updatedAt @default(now())
+  
+  tokenManagament         TokenManagements[]
+  childOf                 Users?               @relation("parent_user", fields: [id_user], references: [id])
+  parentUser              Users[]              @relation("parent_user")
+
+  @@map("users")
+}
+
+model TokenManagements {
+  id                              Int      @id @default(autoincrement())
+  id_user                         Int?
+  origin                          String
+  token                           String
+  expiration                      DateTime
+  data                            Json?
+  status                          Status  @default(INACTIVE)
+
+  created_at                      DateTime @default(now())
+  updated_at                      DateTime @updatedAt @default(now())
+
+  user                            Users?          @relation(fields: [id_user], references: [id])
+
+  @@map("token_managements")
+}
+
+
+
+enum Status {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+}
+
+enum Role {
+  MANAGER
+  SUPPORT
+  EMPLOYEE
+  ADMIN
+  CLIENT
+}
