@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import * as _ from 'lodash';
-import { PrismaService } from 'src/prisma/prisma.service';
-
 interface IOutput {
   success: boolean;
   message: string;
@@ -15,13 +13,9 @@ export class BigdatacorpService {
   private _host: string = `https://plataforma.bigdatacorp.com.br`;
   private _username: string = `diligence`;
   private _password: string = `Np$KKRz5Lf5k!M38`;
-  private _expiration_minute: number = 1440; //24H
+  private _expiration_minute: number = 24; //24H
   private _tz: string = 'America/Sao_Paulo';
   private _origin: string = 'bigdatacorp';
-
-  constructor(private prisma: PrismaService) {
-    this._tz = `${process.env.TZ}` ? `${process.env.TZ}` : this._tz;
-  }
 
   async requestApi(_params: any) {
     let output: any;
@@ -142,7 +136,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "Informações consultadas con sucesso!",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -183,7 +177,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "Informações consultadas con sucesso!",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -224,7 +218,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "Informações consultadas con sucesso!",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -265,7 +259,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "Informações consultadas con sucesso!",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1056,7 +1050,7 @@ export class BigdatacorpService {
     return output;
   }
 
-  // Retornam informações agregadas de pessoas relacionadas a entidade consultada, de acordo com o tipo de relacionamento entre elas.
+  // Retorna informações agregadas de pessoas relacionadas a entidade consultada, de acordo com o tipo de relacionamento entre elas.
   async getCirclesRelatives(params: getCirclesRelativesParams) {
     let output: IOutput;
     try {
@@ -1301,6 +1295,1432 @@ export class BigdatacorpService {
     return output;
   }
 
+  // retorna dados agregados sobre os processos judiciais nos quais a entidade consultada está envolvida.
+  async getDataDistributionLegalProceedings(params: getDataDistributionLegalProceedingsParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/pessoas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "lawsuits_distribution_data",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "Informações consultadas com sucesso!",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna informações agregadas de pessoas relacionadas a entidade consultada
+  async getRelativesFirstDegree(params: getRelativesFirstDegreeParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/pessoas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "circles_first_level_relatives",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "Informações consultadas com sucesso!",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // traz informações detalhadas sobre as doações realizadas para campanhas eleitorais pela entidade consultada
+  async getCompanyElectoralDonations(params: getCompanyElectoralDonationsParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "electoral_donors",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "Informações consultadas com sucesso!",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna o conjunto mais simples de informações dentre todos os datasets
+  async getCompanyBasicRegistrationData(params: getCompanyBasicRegistrationDataParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "basic_data",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "Informações consultadas com sucesso!",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna informações capturadas de fontes de notícias públicas da internet
+  async getCompanyExposureProfileMedia(params: getCompanyExposureProfileMediaParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "media_profile_and_exposure",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna notícias relevantes que dão suporte aos requisitos regulatórios e/ou legais relacionados
+  async getCompanyKYCNews(params: getCompanyKYCNewsParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "kyc_dtec_flex_news",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna informações necessárias para atender a requisitos regulatórios e/ou legais relacionados com processos de know-your-client.
+  async getCompanyKYCCompliance(params: getCompanyKYCComplianceParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "kyc",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna informações análogas ao dataset de KYC e Compliance tradicional, mas com um foco nos registros específicos dos diferentes sócios da empresa consultada
+  async getCompanyPartnerKYCCompliance(params: getCompanyPartnerKYCComplianceParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "owners_kyc",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorn dados agregados sobre os processos judiciais nos quais a entidade consultada está envolvida.
+  async getCompanyDataDistributionLegalProceedings(params: getCompanyDataDistributionLegalProceedingsParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "lawsuits_distribution_data",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna informações, tanto atuais quanto históricas, do envolvimento da entidade consultada em ações judiciais de todos os tipos
+  async getCompanyJudicialAdministrativeProceedings(params: getCompanyJudicialAdministrativeProceedingsParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "processes",
+          "Limit": params.limit
+        }
+      };
+      let outputReq = await axios(config).then(function (response) {
+        return response.data;
+      }).catch(function (error) {
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna informações sobre outras entidades, sejam elas pessoas ou empresas, que estão relacionadas com a empresa consultada
+  async getCompanyRelationships(params: getCompanyRelationshipsParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "relationships",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna informações sobre marcas e patentes relacionadas ao CPF consultado, sendo uma lista de marcas e outra lista de patentes.
+  async getIndustrialProperties(params: getIndustrialPropertiesParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/pessoas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "industrial_property",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna informações análogas ao dataset de KYC e Compliance do indivíduo, mas trazendo os dados de todos os famíliares de primeiro nível do CPF consultado
+  async getKYCFirstLevelFamilyCompliance(params: getKYCFirstLevelFamilyComplianceParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/pessoas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "first_level_relatives_kyc",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorn informações que indicam a presença ou passagem de um indivíduo por algum processo de cobrança de dívida. 
+  async getAttendanceBilling(params: getAttendanceBillingParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/pessoas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "collections",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna um flag que diz se pessoa tem uma probabilidade alta (acima de 70%) de estar inadimplente com algum compromisso financeiro ou de estar negativada em algum serviço de proteção ao crédito
+  async getNegativeProbability(params: getNegativeProbabilityParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/pessoas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "indebtedness_question",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna informações de dados cadastrais de fundos de investimento e outros detalhes, quando disponíveis, de empresas cadastradas no CVM 
+  async getInvestmentFundData(params: getInvestmentFundDataParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "investment_fund_data",
+          "Limit": params.limit
+        }
+      };
+      let outputReq = await axios(config).then(function (response) {
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna uma lista de sócios relacionados ao CNPJ consultado contendo informações detalhadas sobre as doações realizadas para campanhas eleitorais
+  async getElectoralDonationsMembers(params: getElectoralDonationsMembersParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "owners_electoral_donors",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // fornece uma visão temporal da evolução de uma empresa, mostrando a evolução ao longo do tempo de informações como capital da empresa
+  async getCompanyEvolution(params: getCompanyEvolutionParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "company_evolution",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna informações relacionadas com as diferentes licenças e autorizações
+  async getLicensesAuthorizations(params: getLicensesAuthorizationsParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "licenses_and_authorizations",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // traz informações de balanço patrimonial e outros detalhes coletados a partir das informações registradas pelas empresas de capital aberto
+  async getFinancialMarket(params: getFinancialMarketParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "financial_market",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // traz informações sobre contratos e licitações de políticos/partidos com prestadores/fornecedores de serviços eleitorais.
+  async getElectoralServiceProviders(params: getElectoralServiceProvidersParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "financial_market",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna informações sobre marcas e patentes relacionadas ao CNPJ consultado
+  async getIndustrialPropertiesCompanies(params: getIndustrialPropertiesCompaniesParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "industrial_property",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna informações dos sites e domínios que estão associados com a entidade consultada,
+  async getSiteData(params: getSiteDataParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "domains",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  //retorna os e-mails que estão associados com as pessoas relacionadas a entidade consultada
+  async getEmailsPeopleRelatedCompany(params: getEmailsPeopleRelatedCompanyParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "related_people_emails",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // traz informações sobre a presença da empresa em diferentes marketplaces de venda de produtos pela internet
+  async getMarkets(params: getMarketsParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "marketplace_data",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna informações análogas aos dados contidos no dataset de Processos Judiciais
+  async getPartnersJudicialProceedings(params: getPartnersJudicialProceedingsParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "owners_lawsuits",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retornam informações agrupadas e agregadas do grupo econômico relacionado com a empresa principal sendo consultada
+  async getExtendedSecondLevelEconomicGroup(params: getExtendedSecondLevelEconomicGroupParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "economic_group_second_level_extended",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retornam informações agrupadas e agregadas do grupo econômico relacionado com a empresa principal sendo consultada
+  async getCompleteEconomicGroup(params: getCompleteEconomicGroupParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "economic_group_full",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  async getSocialConscience(params: getSocialConscienceParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "social_conscience",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // traz informações sobre a reputação da empresa em diferentes plataformas e sites de avaliação de serviço
+  async getCompanyRatingsReputation(params: getCompanyRatingsReputationParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/empresas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "reputations_and_reviews",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna informações detalhadas sobre um processo em específico, como movimentações, partes envolvidas, corte, júri e decisões, por exemplo.
+  async getBasicDataLegalProceedings(params: getBasicDataLegalProceedingsParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/processos`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "basic_data",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna os dados referentes a emissão da certidão de regularidade do empregador frente ao FGTS
+  async getFGTSCertificate(params: getFGTSCertificateParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/ondemand`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "ondemand_fgts_company",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna os dados referentes a emissão da certidão de débitos relativos a tributos federais e à dívida ativa da união de imóvel Rural
+  async getIRTCertificate(params: getIRTCertificateParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/ondemand`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "ondemand_irt_certificate_company",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna, quando não existem débito estadual associados a entidade sendo consultada
+  async getClearanceCertificateStateDebts(params: getClearanceCertificateStateDebtsParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/ondemand`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "ondemand_cert_debt_absence_by_state_company",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna, quando não existem débitos trabalhistas associados a entidade sendo consultada
+  async getNegativeCertificateLaborDebtsCompany(params: getNegativeCertificateLaborDebtsCompanyParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/ondemand`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "ondemand_cert_labor_debt_absence_company",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
   makeDefaultParams(params: any) {
     let query = `${params.doc ? `doc{${params.doc}},` : ''}${params.name ? `name{${params.name}},` : ''}${params.phone ? `phone{${params.phone}},` : ''}${params.email ? `email{${params.email}},` : ''}${params.classnumber ? `classnumber{${params.classnumber}},` : ''}${params.domain ? `domain{${params.domain}},` : ''}${params.zipcode ? `zipcode{${params.zipcode}},` : ''}${params.classorganization ? `classorganization{${params.classorganization}},` : ''}${params.nit ? `nit{${params.nit}},` : ''}${params.profession ? `profession{${params.profession}},` : ''}${params.cnae ? `cnae{${params.cnae}},` : ''}${params.addressmain ? `addressmain{${params.addressmain}},` : ''}${params.doornumber ? `doornumber{${params.doornumber}},` : ''}${params.neighborhood ? `neighborhood{${params.neighborhood}},` : ''}${params.city ? `city{${params.city}},` : ''}${params.state ? `state{${params.state}},` : ''}${params.latitude ? `latitude{${params.latitude}},` : ''}${params.longitude ? `longitude{${params.longitude}},` : ''}${params.mothername ? `mothername{${params.mothername}},` : ''}${params.docnumbermask ? `docnumbermask{${params.docnumbermask}},` : ''}${params.birthdate ? `birthdate{${params.birthdate}},` : ''}${params.dateformat ? `dateformat{${params.dateformat}},` : ''}`;
     console.log(query);
@@ -1312,7 +2732,7 @@ export class BigdatacorpService {
 export interface defaultFilterKeys {
 
   //Pelo o menos algum destes deve estar preenchido
-  doc?: string,                 // CPF
+  doc?: string,                 // CPF ou CPJN
   name?: string,                // Nome
   phone?: string[],             // Telefones 
   email?: string[],             // Emails
@@ -1340,7 +2760,7 @@ export interface defaultFilterKeys {
 }
 
 export interface getRegistrationDataParams extends defaultFilterKeys {
-  
+
 }
 
 export interface getDomainsParams extends defaultFilterKeys {
@@ -1478,4 +2898,145 @@ export interface getJudicialAdministrativeProceedingsFirstLevelRelativesParams e
 
 export interface getQuodBusinessCreditScoreParams extends defaultFilterKeys {
   doc: string                           // CNPJ
+}
+
+export interface getDataDistributionLegalProceedingsParams extends defaultFilterKeys {
+
+}
+
+export interface getRelativesFirstDegreeParams extends defaultFilterKeys {
+
+}
+
+export interface getCompanyElectoralDonationsParams extends defaultFilterKeys {
+
+}
+
+export interface getCompanyBasicRegistrationDataParams extends defaultFilterKeys {
+
+}
+
+export interface getCompanyExposureProfileMediaParams extends defaultFilterKeys {
+
+}
+
+export interface getCompanyKYCNewsParams extends defaultFilterKeys {
+
+}
+
+export interface getCompanyKYCComplianceParams extends defaultFilterKeys {
+
+}
+
+export interface getCompanyPartnerKYCComplianceParams extends defaultFilterKeys {
+  minmatch?: number //Esse dataset suporta um parametro opcional chamado minmatch, que permite a definição do percentual de similaridade entre o nome da pessoa consultada e o nome presente no registro de sanção a partir do qual o registro será considerado como uma sanção ativa. Atenção! O parâmetro minmatch altera apenas a regra de cálculo do flag "IsCurrentlySanctioned", e não influencia a quantidade de registros retornados na lista detalhada de sanções nem na lista PEP.
+}
+
+export interface getCompanyDataDistributionLegalProceedingsParams extends defaultFilterKeys {
+
+}
+
+export interface getCompanyJudicialAdministrativeProceedingsParams extends defaultFilterKeys {
+  returnupdates?: boolean        // Indica se as listas de updates dos processos devem ser retornados. Caso seja definido como "false", irá reduzir consideravelmente o tamanho do resultado, aprimorando a performance da consulta.
+  returncvmprocesses?: boolean   // Se este parâmetro for definido como "true" e forem encontrados processos cuja corte seja a CVM, os processos serão adicionados ao início da lista de lawsuits. Os processos da CVM possuem um numeração diferente e alguns dos campos, como CourtLevel e CoutType, não são retornados.
+  updateslimit?: number          // Número que determina o limite máximo de retorno das atualizações dos processos judiciais. Se for definido, apenas as atualizações mais recentes são retornados, de acordo com este limite.
+}
+
+export interface getCompanyRelationshipsParams extends defaultFilterKeys {
+
+}
+
+export interface getIndustrialPropertiesParams extends defaultFilterKeys {
+
+}
+
+export interface getKYCFirstLevelFamilyComplianceParams extends defaultFilterKeys {
+  minmatch?: number              // Valor inteiro que permite a definição do percentual de similaridade entre o nome da pessoa consultada e o nome presente no registro de sanção a partir do qual o registro será considerado como uma sanção ativa
+}
+
+export interface getAttendanceBillingParams extends defaultFilterKeys {
+
+}
+
+export interface getNegativeProbabilityParams extends defaultFilterKeys {
+
+}
+
+export interface getInvestmentFundDataParams extends defaultFilterKeys {
+  all?: boolean                    // Permite que sejam retornadas todas as movimentações capturadas para o CNPJ fornecido. É importante ressaltar que esse campo pode ter grande impacto no tempo de resposta do dataset. Caso não seja colocado, o dataset assume o valor como falso
+}
+
+export interface getElectoralDonationsMembersParams extends defaultFilterKeys {
+
+}
+
+export interface getCompanyEvolutionParams extends defaultFilterKeys {
+
+}
+
+export interface getLicensesAuthorizationsParams extends defaultFilterKeys {
+
+}
+
+export interface getFinancialMarketParams extends defaultFilterKeys {
+
+}
+
+export interface getElectoralServiceProvidersParams extends defaultFilterKeys {
+
+}
+
+export interface getIndustrialPropertiesCompaniesParams extends defaultFilterKeys {
+
+}
+
+export interface getSiteDataParams extends defaultFilterKeys {
+
+}
+
+export interface getEmailsPeopleRelatedCompanyParams extends defaultFilterKeys {
+  relationshiptype?: string                //Este dataset suporta um parâmetro opcional, chamado relationshiptype, que permite só recuperar contatos de pessoas que tenham o tipo de relacionamento especificado.
+}
+
+export interface getMarketsParams extends defaultFilterKeys {
+
+}
+
+export interface getPartnersJudicialProceedingsParams extends defaultFilterKeys {
+
+}
+
+export interface getExtendedSecondLevelEconomicGroupParams extends defaultFilterKeys {
+
+}
+
+export interface getCompleteEconomicGroupParams extends defaultFilterKeys {
+
+}
+
+export interface getSocialConscienceParams extends defaultFilterKeys {
+
+}
+
+export interface getCompanyRatingsReputationParams extends defaultFilterKeys { }
+
+export interface getBasicDataLegalProceedingsParams extends defaultFilterKeys {
+  processnumber: string                   // Número do processo a consultar
+
+}
+
+export interface getFGTSCertificateParams extends defaultFilterKeys {
+
+}
+
+export interface getIRTCertificateParams extends defaultFilterKeys {
+  nirf: string
+}
+
+export interface getClearanceCertificateStateDebtsParams extends defaultFilterKeys {
+
+}
+
+export interface getNegativeCertificateLaborDebtsCompanyParams extends defaultFilterKeys {
+
 }

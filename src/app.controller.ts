@@ -12,12 +12,9 @@ export class AppController {
   @Get()
   async getHello(): Promise<any> {
     
-    return await this.bigDataService.getRegistrationData({
-      name: "Matheus Augusto mendes de Paula",
-      // doc: "71109647107",
-      // mothername: "MARLA",
+    return await this.bigDataService.getNegativeCertificateLaborDebtsCompany({
+      doc: "44170913000121",
       limit: 1,
-      phone: ["6293992401"]
     })
   }
 }
