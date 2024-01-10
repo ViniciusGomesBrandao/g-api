@@ -18,7 +18,7 @@ export class ModulesService {
 
   async findAll(searchFilters: SearchModulesDto): Promise<IOutput> {
     let output: IOutput;
-    console.log(searchFilters)
+    
     try {
       const modulesList = await this.prisma.modules.findMany({
         skip: searchFilters.page ? Number(searchFilters.page) : 0,

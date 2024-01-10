@@ -14,7 +14,7 @@ export class CategoriesService {
   }
   async create(createCategoryDto: CreateCategoryDto): Promise<IOutput> {
     let output: IOutput;
-    console.log(createCategoryDto);
+    
     try {
       let newCategory = await this.prisma.categories.create({
         data: {
@@ -219,7 +219,7 @@ export class CategoriesService {
 
   async update(id: number, updateCategoryDto: UpdateCategoryDto) {
     let output: IOutput;
-    console.log(updateCategoryDto);
+    
     try {
       let updateCategory = await this.prisma.categories.update({
         where: {
