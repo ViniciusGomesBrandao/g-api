@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,55 +7,142 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-model Users {
-  id                    Int                    @id @default(autoincrement())
-  id_user               Int?
-  status                Status                 @default(ACTIVE)
-  email                 String?                @db.VarChar(255)
-  password              String?                @db.VarChar(255)
-  username              String?                @db.VarChar(255) @unique
-  role                  Role                   
-  access_token          String?                
-  seed                  String?
-  integration_token     String?
-  onetime_token         String?
-  two_factor_active     Boolean                @default(false)
-  access_allowed        Boolean                @default(false)
-  
-  created_at            DateTime               @default(now())
-  updated_at            DateTime               @updatedAt @default(now())
-  
-  tokenManagament         TokenManagements[]
-  childOf                 Users?               @relation("parent_user", fields: [id_user], references: [id])
-  parentUser              Users[]              @relation("parent_user")
-
-  @@map("users")
+model Categories {
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  description         String?
+  created_id          Int?
+  custom_value        Float?
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @default(now())
+  users               users?                @relation(fields: [created_id], references: [id])
+  CategoriesOnModules CategoriesOnModules[]
+  UsersOnCategories   UsersOnCategories[]
 }
 
-model TokenManagements {
-  id                              Int      @id @default(autoincrement())
-  id_user                         Int?
-  origin                          String
-  token                           String
-  expiration                      DateTime
-  data                            Json?
-  status                          Status  @default(INACTIVE)
-
-  created_at                      DateTime @default(now())
-  updated_at                      DateTime @updatedAt @default(now())
-
-  user                            Users?          @relation(fields: [id_user], references: [id])
-
-  @@map("token_managements")
+model CategoriesOnModules {
+  id         Int        @id @default(autoincrement())
+  categoryId Int
+  moduleId   Int
+  Categories Categories @relation(fields: [categoryId], references: [id])
+  Modules    Modules    @relation(fields: [moduleId], references: [id])
 }
 
+model Modules {
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  description         String
+  value               Float
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @default(now())
+  CategoriesOnModules CategoriesOnModules[]
+  ResourcesOnModules  ResourcesOnModules[]
+}
 
+model Resources {
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  path               String
+  description        String
+  value              Float
+  library            Libraries
+  created_at         DateTime             @default(now())
+  updated_at         DateTime             @default(now())
+  ResourcesOnModules ResourcesOnModules[]
+}
 
-enum Status {
-  ACTIVE
-  INACTIVE
-  BLOCKED
+model ResourcesOnModules {
+  id         Int       @id @default(autoincrement())
+  moduleId   Int
+  resourceId Int
+  Modules    Modules   @relation(fields: [moduleId], references: [id])
+  Resources  Resources @relation(fields: [resourceId], references: [id])
+}
+
+model UsersOnCategories {
+  id         Int        @id @default(autoincrement())
+  userId     Int
+  categoryId Int
+  created_at DateTime   @default(now())
+  updated_at DateTime   @default(now())
+  Categories Categories @relation(fields: [categoryId], references: [id])
+  users      users      @relation(fields: [userId], references: [id])
+}
+
+model security_code {
+  id              Int                @id @default(autoincrement())
+  id_user         Int
+  code            String
+  date_expiration DateTime
+  status          StatusSecurityCode @default(ACTIVE)
+  created_at      DateTime           @default(now())
+  updated_at      DateTime           @default(now())
+  users           users              @relation(fields: [id_user], references: [id])
+}
+
+model token_managements {
+  id         Int      @id @default(autoincrement())
+  id_user    Int?
+  origin     String
+  token      String
+  expiration DateTime
+  data       Json?
+  status     Status   @default(INACTIVE)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  users      users?   @relation(fields: [id_user], references: [id])
+}
+
+model user_configuration {
+  id                       Int      @id @default(autoincrement())
+  id_user                  Int      @unique
+  pix_encoded_pixcopypaste String?
+  pix_qrcode               String?
+  pix_transaction_id       String?
+  pix_key                  String?
+  pix_validation_code      String?
+  twofactor_code           String?
+  fee_service_fixed        Decimal  @default(0.00) @db.Decimal(16, 2)
+  fee_service_percent      Decimal  @default(0.00) @db.Decimal(5, 2)
+  fee_pix                  Decimal  @default(0.00) @db.Decimal(16, 2)
+  baas_key                 String?
+  baas_secret              String?
+  baas_name                String?
+  created_at               DateTime @default(now())
+  updated_at               DateTime @default(now())
+  users                    users    @relation(fields: [id_user], references: [id])
+}
+
+model users {
+  id                 Int                 @id @default(autoincrement())
+  id_user            Int?
+  status             Status              @default(ACTIVE)
+  email              String              @unique
+  password           String?
+  username           String?             @unique
+  role               Role
+  access_token       String?
+  seed               String?             @unique
+  integration_token  String?
+  onetime_token      String?
+  two_factor_active  Boolean             @default(false)
+  access_allowed     Boolean             @default(false)
+  created_at         DateTime            @default(now())
+  updated_at         DateTime            @default(now())
+  email_code         String?
+  email_status       TypeEmailConfirm    @default(UNCONFIRMED)
+  password_code      String?
+  Categories         Categories[]
+  UsersOnCategories  UsersOnCategories[]
+  security_code      security_code[]
+  token_managements  token_managements[]
+  user_configuration user_configuration?
+  users              users?              @relation("usersTousers", fields: [id_user], references: [id])
+  other_users        users[]             @relation("usersTousers")
+}
+
+enum Libraries {
+  BIGDATA
 }
 
 enum Role {
@@ -67,4 +151,22 @@ enum Role {
   EMPLOYEE
   ADMIN
   CLIENT
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+  CREATED
+}
+
+enum StatusSecurityCode {
+  ACTIVE
+  CHECKED
+  CANCELED
+}
+
+enum TypeEmailConfirm {
+  UNCONFIRMED
+  CONFIRMED
 }
