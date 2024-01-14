@@ -2,6 +2,7 @@ import { Controller, Get, Res } from '@nestjs/common';
 import { AppService } from './app.service';
 import { BigdatacorpService } from '@app/bigdatacorp';
 import { Response } from 'express';
+import { IOutput } from './_helpers/default-returns';
 
 @Controller()
 export class AppController {
@@ -13,22 +14,15 @@ export class AppController {
   @Get()
   async getHello(@Res() res: Response): Promise<any> {
 
-    // return await this.bigDataService.getNegativeCertificateLaborDebtsCompany({
-    //   doc: "44170913000121",
-    //   limit: 1,
-    // });
+    const data = await this.bigDataService.getFinancialInformation({doc: "00250076292"});
+    console.log(data)
+    return data;
 
-    const pdfBuffer = await this.appService.getHello();
-    if (pdfBuffer.success) {
-
-      res.setHeader('Content-Type', 'application/pdf');
-      res.send(pdfBuffer.data);
-    } else {
-      console.error('Erro ao gerar o PDF:', pdfBuffer.message);
-      res.status(500).send('Erro ao gerar o PDF');
-    }
-
-
-
+  }
+  @Get("test")
+  async test() : Promise<IOutput>{
+    const data = await this.bigDataService.getProfessionalData({doc: "80874835372"});
+    console.log(data)
+    return data;
   }
 }

@@ -35,6 +35,7 @@ model Modules {
   value               Float
   created_at          DateTime              @default(now())
   updated_at          DateTime              @default(now())
+  path_make_function  String                @default("")
   CategoriesOnModules CategoriesOnModules[]
   ResourcesOnModules  ResourcesOnModules[]
 }

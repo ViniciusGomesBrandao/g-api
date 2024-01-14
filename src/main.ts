@@ -8,8 +8,11 @@ async function bootstrap() {
     .setTitle('DueGuard API Documentation')
     .setDescription('Rest Full api documentation')
     .setVersion('1.0')
+    .addTag('Auth')
     .addTag('Modules')
     .addTag('Categories')
+    .addBearerAuth()
+    .addTag('Reports')
     .build();
   app.useGlobalPipes(new ValidationPipe());
   const document = SwaggerModule.createDocument(app, config);

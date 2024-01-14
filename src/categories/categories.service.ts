@@ -12,7 +12,7 @@ export class CategoriesService {
   ) {
 
   }
-  async create(createCategoryDto: CreateCategoryDto): Promise<IOutput> {
+  async create(createCategoryDto: CreateCategoryDto, userID: number): Promise<IOutput> {
     let output: IOutput;
     
     try {
@@ -24,7 +24,8 @@ export class CategoriesService {
           } : undefined,
           ...createCategoryDto.custom_value ? {
             custom_value: Number(createCategoryDto.custom_value)
-          } : undefined
+          } : undefined,
+          created_id: userID
         },
         select: {
           id: true,
@@ -32,7 +33,17 @@ export class CategoriesService {
           description: true,
           custom_value: true,
         }
+      }).catch((error) => {
+        throw new Error(`Error ao criar caregoria: ${error}`);
       });
+
+      const addUserOnCategory = await this.prisma.usersOnCategories.create({
+        data: {
+          categoryId: newCategory.id,
+          userId: userID
+        }
+      });
+
 
       if (createCategoryDto.modules.length > 0) {
         await Promise.all(createCategoryDto.modules.map(async (moduleID: number) => {
@@ -99,7 +110,7 @@ export class CategoriesService {
     return output;
   }
 
-  async findAll(searchFilters: SearchCategoryDto): Promise<IOutput> {
+  async findAll(searchFilters: SearchCategoryDto, userID: number): Promise<IOutput> {
     let output: IOutput;
     try {
       const categoriesList = await this.prisma.categories.findMany({
@@ -118,6 +129,18 @@ export class CategoriesService {
               },
             ]
           } : undefined,
+          UsersOnCategories: {
+            every: {
+              OR: [
+                {
+                  userId: userID
+                },
+                 {
+                  userId: 4
+                 }
+              ]
+            }
+          }
         },
         select: {
           id: true,
@@ -157,13 +180,18 @@ export class CategoriesService {
 
   }
 
-  async findOne(id: number) {
+  async findOne(id: number, userID: number) {
     let output: IOutput;
     try {
-      const moduleData = await this.prisma.categories.findFirstOrThrow({
+      const categoryData = await this.prisma.categories.findFirstOrThrow({
 
         where: {
-          id: Number(id)
+          id: Number(id),
+          UsersOnCategories: {
+            every: {
+              userId: userID
+            }
+          }
         },
         select: {
           id: true,
@@ -206,7 +234,7 @@ export class CategoriesService {
       output = {
         success: true,
         message: "Modulo consultado com sucesso!",
-        data: moduleData
+        data: categoryData
       }
     } catch (error) {
       output = {

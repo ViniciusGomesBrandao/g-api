@@ -11,8 +11,8 @@ interface IOutput {
 export class BigdatacorpService {
   // private _host: string = `${process.env._BIGDATACORP_ENVIRONMENT_URL}`;
   private _host: string = `https://plataforma.bigdatacorp.com.br`;
-  private _username: string = `diligence`;
-  private _password: string = `Np$KKRz5Lf5k!M38`;
+  private _username: string = `duguard`;
+  private _password: string = `2!f(nmVQA(#H9rw4`;
   private _expiration_minute: number = 24; //24H
   private _tz: string = 'America/Sao_Paulo';
   private _origin: string = 'bigdatacorp';
@@ -231,6 +231,169 @@ export class BigdatacorpService {
     return output;
   }
 
+  async getFinancialInformation(params: getFinancialDataParams){
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/pessoas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "financial_data",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "Informações consultadas com sucesso!",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // permite determinar uma pontuação de risco de crédito de um indivíduo a partir da análise de seus dados financeiros, profissionais e de presença em cobranças no decorrer do tempo.
+  async getFinancialRisk(params: getFinancialRiskParams){
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/pessoas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "financial_risk",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "Informações consultadas com sucesso!",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  // retorna a lista de entidades relacionadas com o indivíduo consultado em um escopo pessoal, que inclui a família, o household, colegas de classe
+  async getPersonalRelationships(params: getPersonalRelationshipsParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/pessoas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "related_people",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "Informações consultadas com sucesso!",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+
+  async getTelephones(params: getTelephonesParams) {
+    let output: IOutput;
+    try {
+      let tokenData = await this.getTokenJwt();
+      let config = {
+        method: "POST",
+        url: `${this._host}/pessoas`,
+        headers: {
+          "AccessToken": tokenData.data.token,
+          "TokenId": tokenData.data.tokenID,
+        },
+        data: {
+          "q": `${this.makeDefaultParams(params)}`,
+          "Datasets": "phones_extended",
+          "Limit": params.limit
+        }
+      };
+
+      let outputReq = await axios(config).then(function (response) {
+
+        return response.data;
+      }).catch(function (error) {
+
+        throw new Error(error);
+      });
+      output = {
+        success: true,
+        message: "Informações consultadas com sucesso!",
+        data: outputReq
+      }
+    } catch (error) {
+      output = {
+        success: false,
+        message: error.message
+      }
+    }
+
+    return output;
+  }
+  
+
   // Retorna informações de participação da pessoa em entidades classistas ou associações profissionais relevantes.
   async getClassCouncils(params: getClassCouncilsParams) {
     let output: IOutput;
@@ -300,7 +463,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -341,7 +504,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -382,7 +545,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -422,7 +585,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -464,7 +627,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -505,7 +668,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -546,7 +709,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -587,7 +750,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -628,7 +791,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -668,7 +831,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -709,7 +872,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -750,7 +913,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -790,7 +953,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -831,7 +994,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -872,7 +1035,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -914,7 +1077,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -955,7 +1118,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -996,7 +1159,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1037,7 +1200,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1078,7 +1241,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1119,7 +1282,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1160,7 +1323,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1201,7 +1364,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1242,7 +1405,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1282,7 +1445,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1487,7 +1650,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1528,7 +1691,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1569,7 +1732,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1610,7 +1773,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1650,7 +1813,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1688,7 +1851,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1728,7 +1891,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1769,7 +1932,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1810,7 +1973,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1851,7 +2014,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1892,7 +2055,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1931,7 +2094,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -1972,7 +2135,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2013,7 +2176,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2054,7 +2217,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2095,7 +2258,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2136,7 +2299,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2177,7 +2340,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2218,7 +2381,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2258,7 +2421,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2299,7 +2462,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2340,7 +2503,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2381,7 +2544,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2422,7 +2585,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2462,7 +2625,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2503,7 +2666,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2544,7 +2707,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2585,7 +2748,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2626,7 +2789,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2667,7 +2830,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -2708,7 +2871,7 @@ export class BigdatacorpService {
       });
       output = {
         success: true,
-        message: "",
+        message: "Informações consultadas com sucesso!",
         data: outputReq
       }
     } catch (error) {
@@ -3038,5 +3201,26 @@ export interface getClearanceCertificateStateDebtsParams extends defaultFilterKe
 }
 
 export interface getNegativeCertificateLaborDebtsCompanyParams extends defaultFilterKeys {
+
+}
+
+export interface getPersonalRelationshipsParams extends defaultFilterKeys {
+  relatedentitytaxidtype?: string //CPF, CNPJ,
+  relationshiplevel?: string //Direto, Indireto, etc
+  relationshiptype?: string //coworker, neighbor, brother, nephew, mother, son, household, grandson, spouse, relative, grandparent, uncle, cousin, father, partner, related
+}
+
+export interface getTelephonesParams extends defaultFilterKeys {
+  // phone?: string //Permite um telefone adicional de entrada para a consulta. O propósito desse telefone adicional é a pesquisa pelas informações globais genéricas do telefone informado, independente de sua associação explícita com o número de documento específico consultado.
+  returnonlydifferentphones?: boolean //Permite que somente sejam retornados telefones diferentes daqueles que foram especificados na chamada, mas que sejam associados ao mesmo titular. O parâmetro quando passado como "true" é habilitado e quando não especificado assume como padrão o valor "false". Este parâmetro permite o controle sobre o retorno da sua chamada, evitando a cobrança caso não existam informações adicionais de outros telefones além dos que foram passados na busca. Para utilizar este campo, basta especificar o parâmetro como "returnonlydifferentphones{true}" e informar a lista de telefones no formato "phone[ xxxxx-xxxx, xxxxx-xxxx, ... ]" .
+  withmatchrate?: boolean //Este campo permite que seja realizada uma comparação entre os números de telefones retornados e o informado através do parâmetro "phone". Para usar essa funcionalidade, um número de telefone deve ser informado no campo "phones", usando a notação de chaves. Ao habilitar este campo, passando o valor "true", será aplicado um algorítmo de distância de palavras para definir a semelhança do telefone informado com cada um dos números retornados na lista. O resultado da operação será atribuido ao campo "MatchRate". Um "MatchRate" de 100 indica que os números são idênticos, valores menores indicam menor similaridade. O valor padrão para esse campo é "false".
+
+}
+
+export interface getFinancialRiskParams extends defaultFilterKeys {
+
+}
+
+export interface getFinancialDataParams  extends defaultFilterKeys {
 
 }
