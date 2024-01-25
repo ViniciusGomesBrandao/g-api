@@ -130,7 +130,7 @@ export class CategoriesService {
             ]
           } : undefined,
           UsersOnCategories: {
-            every: {
+            some: {
               OR: [
                 {
                   userId: userID
@@ -188,7 +188,7 @@ export class CategoriesService {
         where: {
           id: Number(id),
           UsersOnCategories: {
-            every: {
+            some: {
               userId: userID
             }
           }
@@ -245,13 +245,25 @@ export class CategoriesService {
     return output;
   }
 
-  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+  async update(id: number, updateCategoryDto: UpdateCategoryDto, userID: number) {
     let output: IOutput;
     
     try {
       let updateCategory = await this.prisma.categories.update({
         where: {
-          id: Number(id)
+          id: Number(id),
+          UsersOnCategories: {
+            some: {
+              OR: [
+                {
+                  userId: userID
+                },
+                {
+                  userId: 1
+                }
+              ]
+            }
+          }
         },
         data: {
           name: updateCategoryDto.name,

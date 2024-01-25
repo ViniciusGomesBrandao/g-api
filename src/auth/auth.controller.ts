@@ -55,11 +55,14 @@ export class AuthController {
       });
     }
 
+    const userData = {
+      ...req.user,
+      token: token
+    }
     return res.status(HttpStatus.OK).json({
       success: true,
       message: "Autenticado com sucesso",
-      token: token,
-      data: req.user
+      data: userData
     });
   }
 }
