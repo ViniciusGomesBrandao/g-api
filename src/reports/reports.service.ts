@@ -114,7 +114,7 @@ export class ReportsService {
             // CHECK IF EXISTS AND GET INFORMATIONS
             if (this.bigdata && typeof this.bigdata[pathFunction] === 'function') {
               const te = await this.bigdata[pathFunction]({
-                doc: "80874835372"
+                doc: params.doc
               });
               infoData[`${resource.Resources.path}`] = te;
             } else {
